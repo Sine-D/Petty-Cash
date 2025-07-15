@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petty Cash Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Petty Cash Manager</h1>
+            <p>Track your borrowing and returns with ease</p>
+        </div>
+
+        <div class="dashboard">
+            <div class="card balance-card">
+                <i class="fas fa-wallet card-icon"></i>
+                <div class="card-content">
+                    <h3>Current Balance</h3>
+                    <div class="balance-amount" id="currentBalance">Rs0.00</div>
+                    <p><b>Available Funds:</b> <span id="availableFundsDisplay">Rs0.00</span></p>
+                    <button class="btn btn-warning" id="editFundsBtn" style="margin-top:10px;"><i class="fas fa-edit"></i> Edit Funds</button>
+                </div>
+            </div>
+            <div class="card" style="display: flex; flex-direction: column; align-items: center;">
+                <i class="fas fa-arrow-up card-icon text-danger"></i>
+                <div style="margin-bottom: 8px; margin-top: 8px;">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Borrowed" style="max-width:40px;max-height:40px;" />
+                </div>
+                <div class="card-content" style="width: 100%;">
+                    <h3 style="text-align: center;">Total Borrowed</h3>
+                    <div class="stat-number" id="totalBorrowed" style="text-align: center;">Rs0.00</div>
+                </div>
+            </div>
+            <div class="card" style="display: flex; flex-direction: column; align-items: center;">
+                <i class="fas fa-arrow-down card-icon text-success"></i>
+                <div style="margin-bottom: 8px; margin-top: 8px;">
+                    <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" alt="Returned" style="max-width:40px;max-height:40px;" />
+                </div>
+                <div class="card-content" style="width: 100%;">
+                    <h3 style="text-align: center;">Total Returned</h3>
+                    <div class="stat-number" id="totalReturned" style="text-align: center;">Rs0.00</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="openModal('addModal')">
+                <i class="fas fa-plus"></i> Add Transaction
+            </button>
+            <button class="btn btn-info" onclick="openModal('reportModal')">
+                <i class="fas fa-file-alt"></i> Generate Report
+            </button>
+            <button class="btn btn-secondary" onclick="exportData()">
+                <i class="fas fa-download"></i> Export Data
+            </button>
+        </div>
+
+        <div class="filters">
+            <div class="filter-group">
+                <label><i class="fas fa-filter"></i> Status:</label>
+                <select id="statusFilter" onchange="filterTransactions()">
+                    <option value="all">All Transactions</option>
+                    <option value="borrowed">Borrowed</option>
+                    <option value="returned">Returned</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label><i class="fas fa-calendar"></i> Date Range:</label>
+                <input type="date" id="dateFromFilter" onchange="filterTransactions()">
+                <input type="date" id="dateToFilter" onchange="filterTransactions()">
+            </div>
+
+            <div class="filter-group">
+                <label><i class="fas fa-user"></i> Person:</label>
+                <input type="text" id="personFilter" placeholder="Search by borrower name" oninput="filterTransactions()">
+            </div>
+        </div>
+
+        <div class="transactions-container">
+            <h2><i class="fas fa-history"></i> Transaction History</h2>
+            <div id="transactionsList">
+                <div class="empty-state">
+                    <i class="fas fa-clipboard-list"></i>
+                    <h3>No transactions yet</h3>
+                    <p>Add your first petty cash transaction</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-plus-circle"></i> Transaction</h2>
+                <span class="close" onclick="closeModal('addModal')">×</span>
+            </div>
+            <div class="modal-body">
+                <form id="transactionForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar"></i> Borrow Date</label>
+                            <input type="date" id="borrowDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-dollar-sign"></i> Amount</label>
+                            <input type="number" id="amount" step="0.01" min="0" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-dollar-sign"></i> Return Amount (Optional)</label>
+                            <input type="number" id="returnAmount" step="0.01" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-user"></i> Borrower Name</label>
+                            <input type="text" id="borrower" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-phone"></i> Contact (Optional)</label>
+                            <input type="text" id="contact">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar"></i> Return Date (Optional)</label>
+                            <input type="date" id="returnDate">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-comment"></i> Description (Optional)</label>
+                        <textarea id="description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-paperclip"></i> Attachment (Receipt/Image, Optional)</label>
+                        <input type="file" id="attachment" accept="image/*">
+                        <div id="attachmentPreview" style="margin-top:8px; display: flex; align-items: center; gap: 8px;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-comment"></i> Return Notes (Optional)</label>
+                        <textarea id="returnNotes"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('addModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="reportModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-file-alt"></i> Generate Report</h2>
+                <span class="close" onclick="closeModal('reportModal')">×</span>
+            </div>
+            <div class="modal-body">
+                <form id="reportForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-chart-bar"></i> Report Type</label>
+                            <select id="reportType">
+                                <option value="summary">Summary Report</option>
+                                <option value="detailed">Detailed Report</option>
+                                <option value="pending">Pending Returns</option>
+                                <option value="person">Person-wise Report</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar-alt"></i> Period</label>
+                            <select id="reportPeriod">
+                                <option value="today">Today</option>
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                                <option value="quarter">This Quarter</option>
+                                <option value="year">This Year</option>
+                                <option value="custom">Custom Range</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="customDateRange" style="display: none;">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label><i class="fas fa-calendar-day"></i> From Date</label>
+                                <input type="date" id="reportFromDate">
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-calendar-day"></i> To Date</label>
+                                <input type="date" id="reportToDate">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('reportModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-file-alt"></i> Generate Report</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="returnModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-undo"></i> Return Transaction</h2>
+                <span class="close" onclick="closeModal('returnModal')">×</span>
+            </div>
+            <div class="modal-body">
+                <form id="returnForm">
+                    <input type="hidden" id="returnTransactionId">
+                    <!-- Removed Return Date, Return Amount, and Return Notes fields -->
+                    <div class="form-actions" style="display: flex; justify-content: center; gap: 16px;">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('returnModal')">Cancel</button>
+                        <button type="submit" class="btn btn-success"><i class="fas fa-check"></i> Mark as Returned</button>
+                    </div>
+                    <div style="display: flex; justify-content: center; margin-top: 20px;">
+                        <img src="https://i0.wp.com/taxconcept.net/wp-content/uploads/2023/09/Screen-Shot-2023-09-09-at-1.29.47-PM.png?fit=544%2C303&ssl=1" alt="Return" style="max-width: 120px; max-height: 80px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification" class="notification">
+        <span id="notificationText"></span>
+    </div>
+
+    <div id="loadingSpinner" class="loading-spinner">
+        <div class="spinner"></div>
+    </div>
+
+    <div id="editFundsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-edit"></i> Edit Available Funds</h2>
+                <span class="close" onclick="closeModal('editFundsModal')">×</span>
+            </div>
+            <div class="modal-body">
+                <form id="editFundsForm">
+                    <div class="form-group">
+                        <label for="newFunds"><i class="fas fa-dollar-sign"></i> New Available Funds</label>
+                        <input type="number" id="newFunds" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('editFundsModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attachment View Modal -->
+    <div id="attachmentModal" class="modal">
+        <div class="modal-content" style="max-width: 90vw; max-height: 90vh; display: flex; flex-direction: column; align-items: center;">
+            <span class="close" onclick="closeModal('attachmentModal')" style="align-self: flex-end; font-size: 2rem; cursor: pointer;">&times;</span>
+            <img id="attachmentModalImg" src="" alt="Attachment" style="max-width: 100%; max-height: 80vh; border-radius: 10px; box-shadow: 0 2px 12px rgba(0,0,0,0.15); margin: 0 auto;" />
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyB0WxnuGu225kdEHvlJ7y2q6OgSixQH9vQ",
+        authDomain: "petty-cash-web.firebaseapp.com",
+        projectId: "petty-cash-web",
+        storageBucket: "petty-cash-web.firebasestorage.app",
+        messagingSenderId: "936713861491",
+        appId: "1:936713861491:web:3177e30b7ab40b87dc6d06",
+        measurementId: "G-BQCC7MG08Q"
+      };
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+    </script>
+    <script src="js/script.js"></script>
+</body>
+</html>
