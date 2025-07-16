@@ -1,209 +1,282 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="css/styles.css" />
-    <title>Full-Stack Developer | Sineth</title>
-  </head>
-  <body>
-    <nav>
-      <div class="nav__bar">
-        <a href="#"><span class="logo nav__logo">S</span>ineth</a>
-        <div class="nav__menu__btn" id="menu-btn">
-          <i class="ri-menu-3-line"></i>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petty Cash Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Petty Cash Manager</h1>
+            <p>Track your borrowing and returns with ease</p>
         </div>
-      </div>
-      <ul class="nav__links" id="nav-links">
-        <li><a href="#home">Home</a></li>
-        <li><a href="#about">About</a></li>
-        <li><a href="#service">Service</a></li>
-        <li><a href="#portfolio">Projects</a></li>
-        <li><a href="#contact" class="btn">Contact</a></li>
-      </ul>
-      <a href="#contact" class="btn btn__large">Contact</a>
-    </nav>
-    <header class="section__container header__container" id="home">
-      <div class="header__image">
-        <img src="img/me2.jpeg" alt="header" />
-      </div>
-      <div class="header__content">
-        <div>
-          <h1>Sineth<br />Full-Stack<br />Developer</h1>
-        </div>
-        <p class="section__description">
-          "I am a Versatile full-stack developer specializing in building seamless,responsive web applications from front-end design to back-end architecture.Passionate about creating clean code and exceptional user experiences."
-        </p>
-        <div class="header__btn">
-			<a href="https://wa.me/94703287271?text=Hi%20Sineth!%20I%20would%20like%20to%20hire%20you." class="btn" target="_blank">
-			<i class="ri-whatsapp-line"></i> Hire Me Now
-			</a>
 
+        <div class="dashboard">
+            <div class="card balance-card">
+                <i class="fas fa-wallet card-icon"></i>
+                <div class="card-content">
+                    <h3>Current Balance</h3>
+                    <div class="balance-amount" id="currentBalance">Rs0.00</div>
+                    <p><b>Available Funds:</b> <span id="availableFundsDisplay">Rs0.00</span></p>
+                    <button class="btn btn-warning" id="editFundsBtn" style="margin-top:10px;"><i class="fas fa-edit"></i> Edit Funds</button>
+                </div>
+            </div>
+            <div class="card" style="display: flex; flex-direction: column; align-items: center;">
+                <i class="fas fa-arrow-up card-icon text-danger"></i>
+                <div style="margin-bottom: 8px; margin-top: 8px;">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Borrowed" style="max-width:40px;max-height:40px;" />
+                </div>
+                <div class="card-content" style="width: 100%;">
+                    <h3 style="text-align: center;">Total Borrowed</h3>
+                    <div class="stat-number" id="totalBorrowed" style="text-align: center;">Rs0.00</div>
+                </div>
+            </div>
+            <div class="card" style="display: flex; flex-direction: column; align-items: center;">
+                <i class="fas fa-arrow-down card-icon text-success"></i>
+                <div style="margin-bottom: 8px; margin-top: 8px;">
+                    <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" alt="Returned" style="max-width:40px;max-height:40px;" />
+                </div>
+                <div class="card-content" style="width: 100%;">
+                    <h3 style="text-align: center;">Total Returned</h3>
+                    <div class="stat-number" id="totalReturned" style="text-align: center;">Rs0.00</div>
+                </div>
+            </div>
+        </div>
 
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="openModal('addModal')">
+                <i class="fas fa-plus"></i> Add Transaction
+            </button>
+            <button class="btn btn-info" onclick="openModal('reportModal')">
+                <i class="fas fa-file-alt"></i> Generate Report
+            </button>
+            <button class="btn btn-secondary" onclick="exportData()">
+                <i class="fas fa-download"></i> Export Data
+            </button>
         </div>
-      </div>
-    </header>
 
-    <section class="section__container about__container" id="about">
-      <div class="about__image">
-        <img src="img/bg.png" alt="bg" class="about__bg-1" />
-        <img src="img/bg.png" alt="bg" class="about__bg-2" />
-        <img src="img/me.jpeg" alt="about" class="about__img" />
-      </div>
-      <div class="about__content">
-        <h2 class="section__header">Bit About Me</h2>
-        <p class="section__description">
-          A passionate web developer with a creative flair and a knack for
-          turning visions into reality. My journey in web development began with
-          a fascination for coding and design, and it has evolved into a career
-          where I blend aesthetics with functionality. With a focus on user
-          experience and a commitment to staying updated with the latest
-          industry trends, I'm dedicated to creating web solutions that not only
-          meet but exceed expectations.
-        </p>
-        <div class="about__btn">
-          <a href="https://www.linkedin.com/in/sineth-dinsara/" class="btn" target="_blank">
-		  LinkedIn
-</a>
+        <div class="filters">
+            <div class="filter-group">
+                <label><i class="fas fa-filter"></i> Status:</label>
+                <select id="statusFilter" onchange="filterTransactions()">
+                    <option value="all">All Transactions</option>
+                    <option value="borrowed">Borrowed</option>
+                    <option value="returned">Returned</option>
+                </select>
+            </div>
 
-        </div>
-      </div>
-    </section>
+            <div class="filter-group">
+                <label><i class="fas fa-calendar"></i> Date Range:</label>
+                <input type="date" id="dateFromFilter" onchange="filterTransactions()">
+                <input type="date" id="dateToFilter" onchange="filterTransactions()">
+            </div>
 
-    <section class="section__container service__container" id="service">
-      <h2 class="section__header">My Best Services</h2>
-      <div class="service__grid">
-        <div class="service__card">
-          <span><i class="ri-window-fill"></i></span>
-          <h4>Website Design</h4>
-          <p>
-            I craft user-friendly interfaces that engage visitors and help you
-            achieve your online goals with minimum efforts.
-          </p>
+            <div class="filter-group">
+                <label><i class="fas fa-user"></i> Person:</label>
+                <input type="text" id="personFilter" placeholder="Search by borrower name" oninput="filterTransactions()">
+            </div>
         </div>
-        <div class="service__card">
-          <span><i class="ri-store-line"></i></span>
-          <h4>E-commerce Solutions</h4>
-          <p>
-            I build secure, scalable, and user-centric online stores that
-            enhance the shopping experience and drive conversions.
-          </p>
-        </div>
-        <div class="service__card">
-          <span><i class="ri-smartphone-line"></i></span>
-          <h4>Mobile Development</h4>
-          <p>
-            From iOS to Android, I create apps that deliver seamless
-            performance and keep users coming back for more.
-          </p>
-        </div>
-        <div class="service__card">
-          <span><i class="ri-share-fill"></i></span>
-          <h4>Content Marketing</h4>
-          <p>
-            My services include creating blog posts, videos, and social media
-            content that drives traffic and engagement.
-          </p>
-        </div>
-        <div class="service__card">
-          <span><i class="ri-seo-line"></i></span>
-          <h4>SEO</h4>
-          <p>
-            My SEO strategies are tailored to your specific goals, helping you
-            reach your target audience and grow your online presence.
-          </p>
-        </div>
-        <div class="service__card">
-          <span><i class="ri-share-circle-line"></i></span>
-          <h4>Software Products</h4>
-          <p>
-            I build powerful, scalable software products tailored to solve real-world problems and drive business growth. From idea to launch, we deliver innovative solutions that make an impact.
-          </p>
-        </div>
-      </div>
-    </section>
 
-    <section class="section__container portfolio__container" id="portfolio">
-      <h2 class="section__header">My Projects</h2>
-      <p class="section__description" style=" style="text-align:justify;">
-        Explore a showcase of my diverse projects, demonstrating my skills in
-        web development, design, and beyond. Each project reflects my passion
-        for creating impactful and innovative digital experiences.
-      </p>
-      <div class="portfolio__grid">
-        
-        <div class="portfolio__card">
-		  <a href="https://github.com/Sine-D/onlineVideoSystem" target="_blank">
-          <img src="img/vidoora.png" alt="portfolio" />
-		  </a>
+        <div class="transactions-container">
+            <h2><i class="fas fa-history"></i> Transaction History</h2>
+            <div id="transactionsList">
+                <div class="empty-state">
+                    <i class="fas fa-clipboard-list"></i>
+                    <h3>No transactions yet</h3>
+                    <p>Add your first petty cash transaction</p>
+                </div>
+            </div>
         </div>
-        <div class="portfolio__card">
-          <a href="https://github.com/Sine-D/Java-Snake-Game" target="_blank">
-          <img src="img/snake2.avif" alt="portfolio" />
-		  </a>
-        </div>
-        <div class="portfolio__card">
-          <a href="https://github.com/Sine-D/Login-Page" target="_blank">
-          <img src="img/login.png" alt="portfolio" />
-		  </a>
-        </div>
-        <div class="portfolio__card">
-          <a href="https://github.com/Sine-D/To-Do-List" target="_blank">
-          <img src="img/todo.png" alt="portfolio" />
-		  </a>
-        </div>
-		<div class="portfolio__card">
-          <a href="https://github.com/Sine-D/Calculator" target="_blank">
-          <img src="img/calc.png" alt="portfolio" />
-		  </a>
-        </div>
-		<div class="portfolio__card">
-          <a href="https://github.com/Sine-D/Petty-Cash" target="_blank">
-          <img src="img/pety.png" alt="portfolio" />
-		  </a>
-        
-      </div>
-      <div class="portfolio__banner">
-        <div class="portfolio__banner__card">
-          <span><i class="ri-macbook-line"></i></span>
-          <h4>4 Projects</h4>
-          <p>Delivered</p>
-        </div>
-        <div class="portfolio__banner__card">
-          <span><i class="ri-discuss-line"></i></span>
-          <h4>Happy</h4>
-          <p>Customers</p>
-        </div>
-        <div class="portfolio__banner__card">
-          <span><i class="ri-heart-fill"></i></span>
-          <h4>More Lovely</h4>
-          <p>Feedbacks</p>
-        </div>
-      </div>
-    </section>
+    </div>
 
-    <section class="section__container contact__container" id="contact">
-      <div class="logo">S</div>
-      <h2 class="section__header">Let's Talk With Me!</h2>
-      <p class="section__description">
-        An open invitation to connect, and exploring collaborative opportunities
-        on my personal portfolio website.
-      </p>
-      <div class="contact__socials">
-        <a href="https://github.com/Sine-D"><i class="ri-github-fill"></i></a>
-        <a href="https://www.linkedin.com/in/sineth-dinsara/"><i class="ri-linkedin-fill"></i></a>
-        <a href="https://wa.me/94703287271?text=Hi%20Sineth!%20I%20would%20like%20to%20hire%20you."><i class="ri-whatsapp-fill"></i></a>
-      </div>
-    </section>
-    <footer class="footer">
-      Copyright © 2025 Web Design Mastery. All rights reserved.
-    </footer>
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-plus-circle"></i> Transaction</h2>
+                <span class="close" onclick="closeModal('addModal')">×</span>
+            </div>
+            <div class="modal-body">
+                <form id="transactionForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar"></i> Borrow Date</label>
+                            <input type="date" id="borrowDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-dollar-sign"></i> Amount</label>
+                            <input type="number" id="amount" step="0.01" min="0" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-dollar-sign"></i> Return Amount (Optional)</label>
+                            <input type="number" id="returnAmount" step="0.01" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-user"></i> Borrower Name</label>
+                            <input type="text" id="borrower" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-phone"></i> Contact (Optional)</label>
+                            <input type="text" id="contact">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar"></i> Return Date (Optional)</label>
+                            <input type="date" id="returnDate">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-comment"></i> Description (Optional)</label>
+                        <textarea id="description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-paperclip"></i> Attachment (Receipt/Image, Optional)</label>
+                        <input type="file" id="attachment" accept="image/*">
+                        <div id="attachmentPreview" style="margin-top:8px; display: flex; align-items: center; gap: 8px;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-comment"></i> Return Notes (Optional)</label>
+                        <textarea id="returnNotes"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('addModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
-    <script src="https://unpkg.com/scrollreveal"></script>
-    <script src="js/main.js"></script>
-  </body>
+    <div id="reportModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-file-alt"></i> Generate Report</h2>
+                <span class="close" onclick="closeModal('reportModal')">×</span>
+            </div>
+            <div class="modal-body">
+                <form id="reportForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-chart-bar"></i> Report Type</label>
+                            <select id="reportType">
+                                <option value="summary">Summary Report</option>
+                                <option value="detailed">Detailed Report</option>
+                                <option value="pending">Pending Returns</option>
+                                <option value="person">Person-wise Report</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar-alt"></i> Period</label>
+                            <select id="reportPeriod">
+                                <option value="today">Today</option>
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                                <option value="quarter">This Quarter</option>
+                                <option value="year">This Year</option>
+                                <option value="custom">Custom Range</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="customDateRange" style="display: none;">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label><i class="fas fa-calendar-day"></i> From Date</label>
+                                <input type="date" id="reportFromDate">
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-calendar-day"></i> To Date</label>
+                                <input type="date" id="reportToDate">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('reportModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-file-alt"></i> Generate Report</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="returnModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-undo"></i> Return Transaction</h2>
+                <span class="close" onclick="closeModal('returnModal')">×</span>
+            </div>
+            <div class="modal-body">
+                <form id="returnForm">
+                    <input type="hidden" id="returnTransactionId">
+                    <!-- Removed Return Date, Return Amount, and Return Notes fields -->
+                    <div class="form-actions" style="display: flex; justify-content: center; gap: 16px;">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('returnModal')">Cancel</button>
+                        <button type="submit" class="btn btn-success"><i class="fas fa-check"></i> Mark as Returned</button>
+                    </div>
+                    <div style="display: flex; justify-content: center; margin-top: 20px;">
+                        <img src="https://i0.wp.com/taxconcept.net/wp-content/uploads/2023/09/Screen-Shot-2023-09-09-at-1.29.47-PM.png?fit=544%2C303&ssl=1" alt="Return" style="max-width: 120px; max-height: 80px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification" class="notification">
+        <span id="notificationText"></span>
+    </div>
+
+    <div id="loadingSpinner" class="loading-spinner">
+        <div class="spinner"></div>
+    </div>
+
+    <div id="editFundsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-edit"></i> Edit Available Funds</h2>
+                <span class="close" onclick="closeModal('editFundsModal')">×</span>
+            </div>
+            <div class="modal-body">
+                <form id="editFundsForm">
+                    <div class="form-group">
+                        <label for="newFunds"><i class="fas fa-dollar-sign"></i> New Available Funds</label>
+                        <input type="number" id="newFunds" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('editFundsModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attachment View Modal -->
+    <div id="attachmentModal" class="modal">
+        <div class="modal-content" style="max-width: 90vw; max-height: 90vh; display: flex; flex-direction: column; align-items: center;">
+            <span class="close" onclick="closeModal('attachmentModal')" style="align-self: flex-end; font-size: 2rem; cursor: pointer;">&times;</span>
+            <img id="attachmentModalImg" src="" alt="Attachment" style="max-width: 100%; max-height: 80vh; border-radius: 10px; box-shadow: 0 2px 12px rgba(0,0,0,0.15); margin: 0 auto;" />
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyB0WxnuGu225kdEHvlJ7y2q6OgSixQH9vQ",
+        authDomain: "petty-cash-web.firebaseapp.com",
+        projectId: "petty-cash-web",
+        storageBucket: "petty-cash-web.firebasestorage.app",
+        messagingSenderId: "936713861491",
+        appId: "1:936713861491:web:3177e30b7ab40b87dc6d06",
+        measurementId: "G-BQCC7MG08Q"
+      };
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+    </script>
+    <script src="js/script.js"></script>
+</body>
 </html>
